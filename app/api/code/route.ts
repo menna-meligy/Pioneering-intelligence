@@ -7,6 +7,11 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
+const instructionMessage: ChatCompletionRequestMessage = {
+  role: "system",
+  content:
+    "You are a code generator. You must answer only in markdown code snippets. Use code comments for explanations.",
+};
 
 export async function POST(req: Request) {
   try {
@@ -30,14 +35,15 @@ export async function POST(req: Request) {
 
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages,
+      messages: [instructionMessage, ...messages],
     });
 
     // return NextResponse.json(response.data.choices[0].message);
     return NextResponse.json(response.data.choices[0].message);
   } catch (error: any) {
-    console.error("[error]", error);
+    console.error("[CODE_ERROR]", error);
     if (error.response && error.response.status === 429) {
+      // Handle rate limit error by returning a response with status 429
       return new NextResponse(
         "Rate limit exceeded. Retrying after a delay...",
         {
@@ -45,6 +51,7 @@ export async function POST(req: Request) {
         }
       );
     } else {
+      // Handle other errors
       return new NextResponse("Internal Error", { status: 500 });
     }
   }
