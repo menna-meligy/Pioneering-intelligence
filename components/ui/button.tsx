@@ -18,6 +18,7 @@ const buttonVariants = cva(
           "tailwind.config.jsbg-secondary tailwind.config.jstext-secondary-foreground hover:tailwind.config.jsbg-secondary/80",
         ghost: "hover:tailwind.config.jsbg-accent hover:tailwind.config.jstext-accent-foreground",
         link: "tailwind.config.jstext-primary tailwind.config.jsunderline-offset-4 hover:tailwind.config.jsunderline",
+        premium: "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white border-0",
       },
       size: {
         default: "tailwind.config.jsh-10 tailwind.config.jspx-4 tailwind.config.jspy-2",

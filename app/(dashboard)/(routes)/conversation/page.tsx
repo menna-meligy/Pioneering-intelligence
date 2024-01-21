@@ -53,6 +53,7 @@ const ConversationPage = () => {
         }
 
         finally{
+          //rehydrate all server components fetching the latest data
             router.refresh();
         }
     };
