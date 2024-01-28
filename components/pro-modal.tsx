@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useProModal } from '@/hooks/use-pro-modal';
 import { Badge } from "@/components/ui/badge";
 import { Check, Code, ImageIcon, MessageSquare, Music, VideoIcon, Zap } from 'lucide-react';
 import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import axios from 'axios';
 
 const tools = [
         {
@@ -41,6 +42,21 @@ const tools = [
 
 export const ProModal = () => {
     const { isOpen, onClose } = useProModal();
+    const [loading , setLoading] = useState(false);
+    const onSubscribe = async () => {
+        try {
+        setLoading(true);
+        const response = axios.get("/api/stripe");
+        //api -> stripe -> route.ts will return a url in both cases whether the user has a subscribtion or not 
+        window.location.href = (await response).data.url;
+        }
+        catch (error){
+            console.log(error) , "STRIPE_CLIENT_ERROR";
+        }
+        finally{
+            setLoading(false);
+        }
+    }
 
     if (!isOpen) {
         return null;
@@ -97,7 +113,7 @@ export const ProModal = () => {
                         size="lg"
                         variant="premium"
                         className="w-full"
-                        onClick={onClose}
+                        onClick={onSubscribe}
                     >
                         Upgrade
                         <Zap className="w-4 h-4 ml-2 fill-white"/>

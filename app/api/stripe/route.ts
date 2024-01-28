@@ -35,6 +35,8 @@ export async function GET() {
     //if we don't have stripe subscription , we wanna open another form of stripe session
     //open checkout session because it is user first time subscriping in our application
     const stripeSession = await stripe.checkout.sessions.create({
+      success_url: settingsUrl,
+      cancel_url: settingsUrl,
       payment_method_types: ["card"],
       mode: "subscription",
       billing_address_collection: "auto",
@@ -43,7 +45,7 @@ export async function GET() {
         {
           price_data: {
             currency: "USD",
-            product_id: {
+            product_data: {
               name: "WebSync Pro",
               description: "Unlimited AI Generations",
             },
@@ -53,11 +55,8 @@ export async function GET() {
             },
           },
           quantity: 1,
-          price: 2000,
         },
       ],
-      success_url: settingsUrl,
-      cancel_url: settingsUrl,
       metadata: {
         userId, //this checkout which just completed succ, belongs to this userId
       },
