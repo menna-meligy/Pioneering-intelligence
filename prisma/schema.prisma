@@ -16,6 +16,7 @@ model UserApiLimit {
   updatedAt DateTime @default(now())
 }
 
+//for Stripe
 model UserSubscription {
   id                     String    @id @default(cuid())
   userId                 String    @unique
