@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import * as z from "zod";
 import Heading from "@/components/heading";
 import { MessageSquare } from "lucide-react";
@@ -47,6 +48,7 @@ console.log("Modal state after onOpen:", useProModal.getState().isOpen);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
       try {
+        // throw new Error("something")
         const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
         const newMessages = [...messages, userMessage];
         
@@ -63,9 +65,11 @@ console.log("Modal state after onOpen:", useProModal.getState().isOpen);
           // onOpenModal();
           // When you want to open the modal
           onOpen();
-          console.log(proModal.isOpen);
-          console.log("edsfkccc");
-        } 
+          // console.log(proModal.isOpen);
+          // console.log("edsfkccc");
+        }else {
+          toast.error("Something went wrong");
+        }
       }
       //  finally {
         // router.refresh();

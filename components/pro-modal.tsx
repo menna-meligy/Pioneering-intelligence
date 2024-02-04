@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const tools = [
         {
@@ -51,7 +52,8 @@ export const ProModal = () => {
         window.location.href = (await response).data.url;
         }
         catch (error){
-            console.log(error) , "STRIPE_CLIENT_ERROR";
+            // console.log(error) , "STRIPE_CLIENT_ERROR";
+            toast.error("something went wrong");
         }
         finally{
             setLoading(false);
@@ -110,6 +112,7 @@ export const ProModal = () => {
                 </div>
                 <div style={{ textAlign: 'center' }}>
                     <Button
+                        disabled={loading}
                         size="lg"
                         variant="premium"
                         className="w-full"

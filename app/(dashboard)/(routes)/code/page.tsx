@@ -20,8 +20,12 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import ReactMarkdown from "react-markdown";
-
+import { ProModal } from "@/components/pro-modal";
+import { useProModal } from "@/hooks/use-pro-modal";
+import toast from "react-hot-toast";
 const CodePage = () => {
+  const proModal = useProModal();
+  const { isOpen, onOpen, onClose } = useProModal();
     const router = useRouter();
     const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
@@ -49,9 +53,14 @@ const CodePage = () => {
             setMessages((current) => [...current , userMessage , response.data]); 
 
             form.reset();
-        }catch(err){
+        }catch(err : any){
             console.log(err);
             //TO_DO : OPEN PREMIUM MODEL
+            if(err?.response?.status === 403){
+              onOpen();
+            }else {
+                toast.error("Something went wrong");           
+            }
         }
 
         finally{

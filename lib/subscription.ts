@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 
 const DAY_IN_MS = 86_400_000;
-
+//this util is for checking if the user is subscibed and the subscribtion is not expired yet
 export const checkSubscription = async () => {
   const { userId } = auth();
 
@@ -26,11 +26,11 @@ export const checkSubscription = async () => {
   if (!userSubscription) {
     return false;
   }
-
+  //has a subsciption, but checking for its validity
   const isValid =
     userSubscription.stripePriceId &&
     userSubscription.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS >
-      Date.now();
+      Date.now(); //TO_DO: DAY_IN_MS
 
-  return !!isValid;
+  return !!isValid; //!! making sure that isValid is always a boolean
 };
