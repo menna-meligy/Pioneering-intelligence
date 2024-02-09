@@ -1,9 +1,11 @@
+"user client";
+
 import { useAuth } from "@clerk/nextjs";
 import { Link } from "lucide-react";
 import TypewriterComponent from "typewriter-effect";
 import { Button } from "./ui/button";
 export const LandingHero = () =>{
-    const isSignedIn = useAuth();
+    // const isSignedIn = useAuth();
     return (
 <div className="text-white font-bold py-36 text-center space-y-5">
     <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
@@ -11,7 +13,7 @@ export const LandingHero = () =>{
             The Best AI Tool for you
         </h1>
         <div className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-            <TypewriterComponent
+            {/* <TypewriterComponent
             options={{
                 strings : [
                     "chatbot.",
@@ -20,7 +22,7 @@ export const LandingHero = () =>{
                 autoStart : true,
                 loop : true,
             }}
-            />
+            /> */}
         </div>
     </div>
 
@@ -31,7 +33,7 @@ export const LandingHero = () =>{
             </div>
 
             <div>
-                <Link href={isSignedIn ? "/dashboard" : "/sign-up"} >
+                <Link  >
                     <Button variant="premium" className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
                         Start Generating For Free
                     </Button>

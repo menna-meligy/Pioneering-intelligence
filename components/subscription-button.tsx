@@ -10,8 +10,9 @@ interface subscriptionButtonProps {
     isPro : boolean;
 }
 
-export const subscriptionButton = ({isPro = false } : subscriptionButtonProps) => {
-    const {loading , isLoading} = useState(false);
+export const SubscriptionButton = ({isPro = false } : subscriptionButtonProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [loading , isLoading] = useState(false);
 
     const onClick = async () =>{
         try{

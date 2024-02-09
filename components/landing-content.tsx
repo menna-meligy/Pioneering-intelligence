@@ -1,6 +1,5 @@
 "use client";
 
-import { Description } from "@radix-ui/react-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const testimonials = [
