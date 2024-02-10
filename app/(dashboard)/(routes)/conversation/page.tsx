@@ -2,7 +2,7 @@
 
 import toast from "react-hot-toast";
 import * as z from "zod";
-import Heading from "@/components/heading";
+import { Heading } from "@/components/heading";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constants";
@@ -23,11 +23,11 @@ import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
 const ConversationPage = () => {
     const proModal = useProModal();
-    // const [, forceUpdate] = useState({});
-    // const onOpenModal = () => {
-    //   proModal.onOpen();
-    //   forceUpdate({}); // Force re-render
-    // };
+    const [, forceUpdate] = useState({});
+    const onOpenModal = () => {
+      proModal.onOpen();
+      forceUpdate({}); // Force re-render
+    };
 const { isOpen, onOpen, onClose } = useProModal();
 console.log("Initial modal state:", isOpen);
 

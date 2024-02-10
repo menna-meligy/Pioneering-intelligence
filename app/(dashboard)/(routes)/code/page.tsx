@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import Heading from "@/components/heading";
+import { Heading} from "@/components/heading";
 import { Code, Divide } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { formSchema } from "./constants";
