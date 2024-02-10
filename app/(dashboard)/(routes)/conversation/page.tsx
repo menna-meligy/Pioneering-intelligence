@@ -55,6 +55,13 @@ console.log("Modal state after onOpen:", useProModal.getState().isOpen);
         const response = await axios.post('/api/conversation', { messages: newMessages });
         setMessages((current) => [...current, userMessage, response.data]);
         
+        //saving chat to prisma db
+        const messageData = {
+          question : values.prompt,
+          answer : response.data
+        }
+        // prisma.stripe
+
         form.reset();
       } catch (error: any) {
         if (error?.response?.status === 403) {
