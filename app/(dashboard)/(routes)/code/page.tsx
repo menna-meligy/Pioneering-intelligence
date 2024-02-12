@@ -23,6 +23,9 @@ import ReactMarkdown from "react-markdown";
 import { ProModal } from "@/components/pro-modal";
 import { useProModal } from "@/hooks/use-pro-modal";
 import toast from "react-hot-toast";
+
+import {saveMessageData} from "@/lib/message"
+
 const CodePage = () => {
   const proModal = useProModal();
   const { isOpen, onOpen, onClose } = useProModal();
@@ -39,7 +42,7 @@ const CodePage = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values : z.infer<typeof formSchema>) => {
-        console.log(values);
+        console.log("valuees" , values);
 
         try{
             //modifications with the local messages and post req new api routes 
@@ -49,12 +52,24 @@ const CodePage = () => {
             };
             const newMessages = [...messages, userMessage];
 
+            const { prompt } = values;
+            const question = prompt;
             const response = await axios.post("/api/code" , {messages : newMessages});
             setMessages((current) => [...current , userMessage , response.data]); 
-
+            
+            console.log("questionnnnnn" , question);
+            console.log("response" , response.data.content);
+            
+            var ans = await saveMessageData(question, response.data.content);
+            if (ans === undefined || ans === null) {
+              console.log("f");
+            }else {
+              console.log("t");
+            }
+            console.log("anssssssssssssssss" , ans);
             form.reset();
         }catch(err : any){
-            console.log(err);
+            // console.log(err);
             //TO_DO : OPEN PREMIUM MODEL
             if(err?.response?.status === 403){
               onOpen();

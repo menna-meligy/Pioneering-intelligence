@@ -21,6 +21,8 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
+import {saveMessageData} from "@/lib/message"
+
 const ConversationPage = () => {
     const proModal = useProModal();
     const [, forceUpdate] = useState({});
@@ -51,15 +53,18 @@ console.log("Modal state after onOpen:", useProModal.getState().isOpen);
         // throw new Error("something")
         const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
         const newMessages = [...messages, userMessage];
-        
+        const { prompt } = values;
+        const question = prompt;
         const response = await axios.post('/api/conversation', { messages: newMessages });
         setMessages((current) => [...current, userMessage, response.data]);
-        
+        console.log("question" , question);
+        console.log("response" , response);
+        await saveMessageData(question, response.data);
         //saving chat to prisma db
-        const messageData = {
-          question : values.prompt,
-          answer : response.data
-        }
+        // const messageData = {
+        //   question : values.prompt,
+        //   answer : response.data
+        // }
         // prisma.stripe
 
         form.reset();

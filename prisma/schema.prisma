@@ -26,15 +26,16 @@ model UserSubscription {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
-model User {
-  id String @id @default(cuid())
-}
+// model User {
+//   id String @id @default(cuid())
+// }
 
 model Message {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String   @unique
   question  String
   answer    String
+  count     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
