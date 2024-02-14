@@ -43,7 +43,7 @@ export const FreeCounter = ({
             </div>
             <Button variant="premium" className="w-full">
               Upgrade
-              <Zap className="w-4 h-4 ml-2 fill-white" />
+              {/* <Zap className="w-4 h-4 ml-2 fill-white" /> */}
             </Button>
             {/* <Progress value={33} /> */}
 

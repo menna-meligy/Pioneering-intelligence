@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
+import { saveMessageData } from "@/lib/message";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -36,7 +37,6 @@ export async function POST(req: Request) {
     const freeTrial = await checkApiLimit();
 
     const isPro = await checkSubscription();
-
     if (!freeTrial && !isPro) {
       return new NextResponse(
         "Free trial has expired. Please upgrade to pro.",
@@ -51,9 +51,20 @@ export async function POST(req: Request) {
     //if the user is still in the free api counts
     if (!isPro) {
       await incrementApiLimit();
+      // await saveMessageData("ddd", "lll");
     }
 
+    // const saveMessage = await saveMessageData(
+    //   messages,
+    //   NextResponse.json(response.data.choices[0].message)
+    // );
     // return NextResponse.json(response.data.choices[0].message);
+
+    // const saveResult = await saveMessageData(
+    //   messages,
+    //   response.data.choices[0].message
+    // );
+
     return NextResponse.json(response.data.choices[0].message);
   } catch (error: any) {
     console.error("[CODE_ERROR]", error);

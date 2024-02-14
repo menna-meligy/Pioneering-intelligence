@@ -5,6 +5,8 @@ import { Configuration, OpenAIApi } from "openai";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 
 import { checkSubscription } from "@/lib/subscription";
+import { saveMessageData } from "@/lib/message";
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -13,13 +15,14 @@ const openai = new OpenAIApi(configuration);
 
 export async function POST(req: Request) {
   try {
-    // const { userId } = auth();
+    const { userId } = auth();
     const body = await req.json();
     const { messages } = body;
 
-    // if (!userId) {
-    //   return new NextResponse("Unauthorized", { status: 401 });
-    // }
+    console.log(messages, "messages");
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
     if (!configuration.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", {
@@ -46,12 +49,19 @@ export async function POST(req: Request) {
       model: "gpt-3.5-turbo",
       messages,
     });
+    const responseData = response.data.choices[0].message;
 
     if (!isPro) {
       await incrementApiLimit();
+      if (messages.length > 1) {
+        await saveMessageData(
+          messages[messages.length - 1].content,
+          messages[messages.length - 2].content
+        );
+      }
     }
 
-    return NextResponse.json(response.data.choices[0].message);
+    return NextResponse.json(responseData);
   } catch (error) {
     console.log("[CONVERSATION_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });

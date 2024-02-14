@@ -21,21 +21,10 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
-import {saveMessageData} from "@/lib/message"
+import {saveMessageData} from "@/lib/message";
 
 const ConversationPage = () => {
     const proModal = useProModal();
-    const [, forceUpdate] = useState({});
-    const onOpenModal = () => {
-      proModal.onOpen();
-      forceUpdate({}); // Force re-render
-    };
-const { isOpen, onOpen, onClose } = useProModal();
-console.log("Initial modal state:", isOpen);
-
-
-console.log("Modal state after onOpen:", useProModal.getState().isOpen);
-
     const router = useRouter();
     const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
@@ -56,43 +45,39 @@ console.log("Modal state after onOpen:", useProModal.getState().isOpen);
         const { prompt } = values;
         const question = prompt;
         const response = await axios.post('/api/conversation', { messages: newMessages });
-        setMessages((current) => [...current, userMessage, response.data]);
         console.log("question" , question);
         console.log("response" , response);
-        await saveMessageData(question, response.data);
+        setMessages((current) => [...current, userMessage, response.data]);
+        // await saveMessageData(question , response.data.content);
+        // const ans = await saveMessageData(";;;", "qqqq");
+        console.log("anss" , ans);
+        // if (response){
+          // await saveMessageData();
+        //   console.log("from conversation")
+        // }
         //saving chat to prisma db
         // const messageData = {
         //   question : values.prompt,
         //   answer : response.data
         // }
         // prisma.stripe
-
         form.reset();
       } catch (error: any) {
         if (error?.response?.status === 403) {
-          
-          console.log("edsfksssss");
-          console.log(proModal.isOpen);
-          // proModal.onOpen();
-          // onOpenModal();
-          // When you want to open the modal
-          onOpen();
-          // console.log(proModal.isOpen);
-          // console.log("edsfkccc");
+          proModal.onOpen();
         }else {
           toast.error("Something went wrong");
         }
       }
-      //  finally {
-        // router.refresh();
-      // }
+       finally {
+        router.refresh();
+      }
     }
   
 
     return ( 
         <div>   
         <div>
-            {/* Hello conversation */}
             <Heading title="conversation" description="our most advanced conversation model." icon={MessageSquare} iconColor="text-violet-500" bgColor="bg-violet-500/10" />
         </div>
 

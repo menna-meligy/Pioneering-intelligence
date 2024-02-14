@@ -20,15 +20,13 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import ReactMarkdown from "react-markdown";
-import { ProModal } from "@/components/pro-modal";
 import { useProModal } from "@/hooks/use-pro-modal";
 import toast from "react-hot-toast";
 
-import {saveMessageData} from "@/lib/message"
+import {saveMessageData} from "@/lib/message";
 
 const CodePage = () => {
-  const proModal = useProModal();
-  const { isOpen, onOpen, onClose } = useProModal();
+    const proModal = useProModal();
     const router = useRouter();
     const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
@@ -60,21 +58,22 @@ const CodePage = () => {
             console.log("questionnnnnn" , question);
             console.log("response" , response.data.content);
             
-            var ans = await saveMessageData(question, response.data.content);
-            if (ans === undefined || ans === null) {
-              console.log("f");
-            }else {
-              console.log("t");
-            }
-            console.log("anssssssssssssssss" , ans);
+            // await saveMessageData(question , response.data.content);
+            // if (ans === undefined || ans === null) {
+            //   console.log("f");
+            // }else {
+            //   console.log("t");
+            // }
+            // console.log("anssssssssssssssss" , ans);
             form.reset();
         }catch(err : any){
             // console.log(err);
             //TO_DO : OPEN PREMIUM MODEL
             if(err?.response?.status === 403){
-              onOpen();
+              proModal.onOpen();
             }else {
-                toast.error("Something went wrong");           
+                toast.error("Something went wrong");       
+                console.log("error" , err);    
             }
         }
 

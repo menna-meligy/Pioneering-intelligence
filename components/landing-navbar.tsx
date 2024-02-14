@@ -14,7 +14,7 @@ export const LandingNavbar = () => {
     //useAuth -> is for user components
     //Auth    -> is for server components
   const { isSignedIn } = useAuth();
-
+    
   return (
     <nav className="p-4 bg-transparent flex items-center justify-between">
       <Link href="/" className="flex items-center">
@@ -27,9 +27,9 @@ export const LandingNavbar = () => {
       </Link>
       <div className="flex items-center gap-x-2">
         <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
-          <Button variant="outline" className="rounded-full">
+        <Button variant="outline" className="rounded-full border border-input bg-navy text-white hover:bg-accent hover:text-accent-foreground text-sm px-4 py-2">
             Get Started
-          </Button>
+        </Button>
         </Link>
       </div>
     </nav>
