@@ -18,6 +18,11 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
+    "@tensorflow-models/coco-ssd": "^2.2.1",
+    "@tensorflow/tfjs-backend-cpu": "^2.8.6",
+    "@tensorflow/tfjs-backend-webgl": "2.8.6",
+    "@tensorflow/tfjs-converter": "^4.10.0",
+    "@tensorflow/tfjs-core": "^2.8.6",
     "axios": "^1.6.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -48,5 +53,10 @@
     "prisma": "^5.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "@tensorflow/tfjs-backend-webgl": "2.8.6",
+    "@tensorflow/tfjs-converter": "^4.10.0",
+    "@tensorflow/tfjs-core": "^2.8.6"
   }
 }

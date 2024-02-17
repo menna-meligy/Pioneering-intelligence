@@ -22,6 +22,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
 import {saveMessageData} from "@/lib/message";
+import { Detector } from "@/components/object-detector";
 
 const ConversationPage = () => {
     const proModal = useProModal();
@@ -50,7 +51,7 @@ const ConversationPage = () => {
         setMessages((current) => [...current, userMessage, response.data]);
         // await saveMessageData(question , response.data.content);
         // const ans = await saveMessageData(";;;", "qqqq");
-        console.log("anss" , ans);
+        // console.log("anss" , ans);
         // if (response){
           // await saveMessageData();
         //   console.log("from conversation")
@@ -107,7 +108,7 @@ const ConversationPage = () => {
 > 
     Generate
 </Button>
-
+<Detector/>
 
                     </form>
                 </Form>
