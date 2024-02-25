@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+// import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
@@ -17,13 +17,13 @@ const instructionMessage: ChatCompletionRequestMessage = {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
+    // const { userId } = auth();
     const body = await req.json();
     const { messages } = body;
 
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    // if (!userId) {
+    //   return new NextResponse("Unauthorized", { status: 401 });
+    // }
 
     if (!configuration.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", {
