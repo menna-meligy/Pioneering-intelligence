@@ -22,7 +22,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
 import {saveMessageData} from "@/lib/message";
-import { Detector } from "@/components/object-detector";
+import  ImageClassifier  from "@/components/object-detector/index";
 
 const ConversationPage = () => {
     const proModal = useProModal();
@@ -108,7 +108,7 @@ const ConversationPage = () => {
 > 
     Generate
 </Button>
-<Detector/>
+<ImageClassifier/>
 
                     </form>
                 </Form>
