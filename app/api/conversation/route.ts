@@ -5,8 +5,8 @@ import { Configuration, OpenAIApi } from "openai";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 
 import { checkSubscription } from "@/lib/subscription";
-import { saveMessageData } from "@/lib/message";
-
+// import { saveMessageData } from "@/lib/message";
+import { saveMessageData } from "../../../mongodb/messageService";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -54,6 +54,10 @@ export async function POST(req: Request) {
     if (!isPro) {
       await incrementApiLimit();
       if (messages.length > 1) {
+        // await saveMessageData(
+        //   messages[messages.length - 1].content,
+        //   messages[messages.length - 2].content
+        // );
         await saveMessageData(
           messages[messages.length - 1].content,
           messages[messages.length - 2].content

@@ -43,24 +43,20 @@ model UserSubscription {
 //   updatedAt DateTime @default(now())
 // }
 
-model User {
-  id        String    @id @default(cuid())
-  messages  Message[] //one to many relationship
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
+// model User {
+//   id        String    @id @default(cuid())
+//   messages  Message[] //one to many relationship
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @default(now())
 
-  @@unique([id])
-}
+//   @@unique([id])
+// }
 
 model Message {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  count     Int      @default(0)
+  userId    String   @unique
   question  String   @default("Ask here")
   answer    String   @default("answer")
+  count     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  @@unique([id])
 }
