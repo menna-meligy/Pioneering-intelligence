@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs";
-import Chat, { IChat } from "@/models/chatModel";
-import Message, { IMessage } from "@/models/messageModel";
-import { Types } from "mongoose";
+import ChatModel, { IChat } from "@/models/chatModel";
+import MessageModel, { IMessage } from "@/models/messageModel";
 
 export const saveMessageData = async (question: string, answer: string) => {
   const maxLength = 100;
@@ -11,34 +10,31 @@ export const saveMessageData = async (question: string, answer: string) => {
   const truncatedAnswer =
     answer.length > maxLength ? answer.slice(0, maxLength) : answer;
 
-  const { userId } = auth();
-  if (!userId) {
-    console.error("Error: Invalid userId provided");
-    throw new Error("Invalid userId provided");
-  }
-
   try {
-    console.log("Saving message data...");
-    console.log("Question:", question);
-    console.log("Answer:", answer);
+    const { userId } = auth();
+    console.log("userId:", userId); // Log userId for debugging
 
-    const userIdString = String(userId);
-    const userIdObjectId = new Types.ObjectId(userId);
-
-    let chat: IChat | null = await Chat.findOne({ uId: userIdObjectId });
-
-    if (!chat) {
-      chat = new Chat({
-        chatName: "Chat",
-        uId: userIdObjectId,
-      });
-      await chat.save();
+    if (!userId) {
+      console.error("Error: Invalid userId provided");
+      throw new Error("Invalid userId provided");
     }
 
-    const newMessage = new Message({
+    // Your logic here for creating or finding the chat associated with the userId
+    let chat = await ChatModel.findOne({ uId: userId });
+
+    if (!chat) {
+      // If chat doesn't exist, create a new one
+      chat = await ChatModel.create({
+        chatName: "Default Chat Name", // You can customize this as needed
+        uId: userId,
+      });
+    }
+
+    // Create and save the new message
+    const newMessage = new MessageModel({
       question: truncatedQuestion,
       answer: truncatedAnswer,
-      chat: chat._id,
+      chat: chat._id, // Associate the message with the chat
     });
 
     await newMessage.save();

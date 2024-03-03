@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
-import { saveMessageData } from "@/lib/message";
+// import { saveMessageData } from "@/lib/message";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });

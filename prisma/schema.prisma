@@ -52,11 +52,25 @@ model UserSubscription {
 //   @@unique([id])
 // }
 
+// model Message {
+//   id        String   @id @default(cuid())
+//   userId    String   @unique
+//   question  String   @default("Ask here")
+//   answer    String   @default("answer")
+//   count     Int      @default(0)
+//   createdAt DateTime @default(now())
+// }
+model Chat {
+  id       String    @id @default(cuid())
+  name     String    @default("My Chat")
+  messages Message[]
+}
+
 model Message {
   id        String   @id @default(cuid())
-  userId    String   @unique
-  question  String   @default("Ask here")
-  answer    String   @default("answer")
-  count     Int      @default(0)
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    String
+  question  String
+  answer    String
   createdAt DateTime @default(now())
 }

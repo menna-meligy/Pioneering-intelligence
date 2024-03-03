@@ -21,8 +21,9 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
-import {saveMessageData} from "@/lib/message";
+// import {saveAnswer , saveQuestion} from "@/lib/message";
 import  ImageClassifier  from "@/components/object-detector/index";
+// import ChatApp from "@/app/api/chat/create-chathat";
 
 const ConversationPage = () => {
     const proModal = useProModal();
@@ -45,7 +46,11 @@ const ConversationPage = () => {
         const newMessages = [...messages, userMessage];
         const { prompt } = values;
         const question = prompt;
-        const response = await axios.post('/api/conversation', { messages: newMessages });
+        const response = await axios.post('/api/conversation', { messages: newMessages});
+        const responseData: string = response.data as string;
+        // await saveQuestion(question);
+        // await saveAnswer(responseData);
+
         console.log("question" , question);
         console.log("response" , response);
         setMessages((current) => [...current, userMessage, response.data]);
@@ -78,6 +83,7 @@ const ConversationPage = () => {
 
     return ( 
         <div>   
+          {/* <ChatApp/> */}
         <div>
             <Heading title="conversation" description="our most advanced conversation model." icon={MessageSquare} iconColor="text-violet-500" bgColor="bg-violet-500/10" />
         </div>

@@ -1,3 +1,4 @@
+import { UserAvatar } from "./../components/user-avatar";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
@@ -6,6 +7,7 @@ import { MAX_FREE_COUNTS } from "@/constants";
 export const incrementApiLimit = async () => {
   const { userId } = auth();
   if (!userId) {
+    console.log("UserId limit", userId);
     return;
   }
 
