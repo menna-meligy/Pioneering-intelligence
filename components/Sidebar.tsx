@@ -3,8 +3,6 @@
 import { Montserrat } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-
-
 import { cn } from "@/lib/utils";
 import { Code, ImageIcon, LayoutDashboard, MessagesSquare, Music, Settings, VideoIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
