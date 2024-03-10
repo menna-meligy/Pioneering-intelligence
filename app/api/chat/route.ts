@@ -1,54 +1,38 @@
-import { Request, Response } from "express";
-import { createChatDB, getChatsDB } from "../../../lib/message";
+import Chat from "@/models/chatModel";
+import connectDB from "@/mongoConfig/db";
 import { NextResponse } from "next/server";
 
-import { NextApiRequest, NextApiResponse } from "next";
-import prismadb from "@/lib/prismadb";
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+// export async function POST(request: any) {
+//   try {
+//     const { chatName } = await request.json();
+//     await connectDB();
+//     await Chat.create({ name: chatName });
+//     return NextResponse.json({ message: "Chat Created" }, { status: 201 });
+//   } catch (error) {
+//     console.error("Error fetching chats:", error);
+//     return NextResponse.json(
+//       { message: "Internal server error" },
+//       { status: 500 }
+//     );
+//   }
+// }
+export async function POST(request: any) {
   try {
-    console.log("req", req);
-    console.log("req meth", req.method);
-    if (req.method !== "POST") {
-      return res.status(405).json({ message: "Method not allowed" });
-    }
-
-    // Parse the request body
-    const { newChatName } = req.body;
-    console.log("newChatName", newChatName);
-    if (!newChatName) {
-      return res.status(400).json({ error: "New chat name is required" });
-    }
-
-    // Create the chat
-    const newChat = await prismadb.chat.create({
-      data: {
-        name: newChatName,
-      },
-    });
-
-    // Return the newly created chat
-    return res
-      .status(201)
-      .json({ message: "Chat created successfully", data: newChat });
+    const { newChatName } = await request.json(); // Extract newChatName from JSON body
+    await connectDB();
+    await Chat.create({ name: newChatName }); // Create chat with the extracted name
+    return NextResponse.json({ message: "Chat Created" }, { status: 201 });
   } catch (error) {
     console.error("Error creating chat:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
-  try {
-    const chats = await getChatsDB();
-    return new NextResponse(JSON.stringify(chats));
-  } catch (error: any) {
-    console.error("Error fetching chats:", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500 }
-    );
-  }
+  await connectDB();
+  const chats = await Chat.find();
+  return NextResponse.json({ chats });
 }

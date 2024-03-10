@@ -22,7 +22,9 @@ const ChatApp: React.FC<Props> = ({ chats }) => {
   const fetchChats = async () => {
     try {
       console.log("fetching");
-      const chatsResponse = await fetch('/api/chat');
+      const chatsResponse = await fetch('http://localhost:3000/api/chat' , {
+        cache: "no-store",
+      });
       const chatsData = await chatsResponse.json();
       if (chatsResponse.ok) {
         setCurrentChat(chatsData);
@@ -37,7 +39,7 @@ const ChatApp: React.FC<Props> = ({ chats }) => {
   const createChat = async () => {
     try {
       console.log("newChatName from frontend", newChatName);
-      const response = await fetch('/api/chat', {
+      const response = await fetch('http://localhost:3000/api/chat', {
         method: "POST",
         body: JSON.stringify({ newChatName }),
         headers: { "Content-Type": "application/json" }
@@ -94,6 +96,9 @@ const ChatApp: React.FC<Props> = ({ chats }) => {
           ))}
         </ul>
       </div>
+
+
+      
       {currentChat && (
         <div>
           <h2 className="text-xl font-semibold">{currentChat.name}</h2>

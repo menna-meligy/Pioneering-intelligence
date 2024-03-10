@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
-import ChatModel, { IChat } from "@/models/chatModel";
-import MessageModel, { IMessage } from "@/models/messageModel";
+import {ChatModel } from "@/models/chatModel";
+import {MessageModel } from "@/models/messageModel";
 
 export const saveMessageData = async (question: string, answer: string) => {
   const maxLength = 100;
