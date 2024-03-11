@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { Code, ImageIcon, LayoutDashboard, MessagesSquare, Music, Settings, VideoIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {FreeCounter} from "@/components/free-counter";
-import ChatApp from "../app/chat/create-chat";
 
 const montserrat = Montserrat({weight:"600" , subsets:["latin"]})
 const routes = [
@@ -97,7 +96,6 @@ export const Sidebar = ({
                     </Link>)}
                 </div>
             </div>
-            <ChatApp/>
             
             <FreeCounter
             apiLimitCount={apiLimitCount}

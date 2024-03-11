@@ -21,14 +21,14 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
-// import {saveAnswer , saveQuestion} from "@/lib/message";
 import  ImageClassifier  from "@/components/object-detector/index";
-// import ChatApp from "@/app/api/chat/create-chathat";
 
-const ConversationPage = () => {
+const ConversationPage = ({ chatId }: { chatId: string }) => {
     const proModal = useProModal();
     const router = useRouter();
     const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver : zodResolver(formSchema),
@@ -46,14 +46,56 @@ const ConversationPage = () => {
         const newMessages = [...messages, userMessage];
         const { prompt } = values;
         const question = prompt;
+
         const response = await axios.post('/api/conversation', { messages: newMessages});
-        const responseData: string = response.data as string;
+        const responseData: string = response.data.content as string;
+        setMessages((current) => [...current, { ...userMessage, chatId }, response.data]);
+
         // await saveQuestion(question);
         // await saveAnswer(responseData);
+        console.log(question , "question before post");
+        console.log(responseData , "responseData before post");
 
-        console.log("question" , question);
-        console.log("response" , response);
+        // const createResponse = await fetch('http://localhost:3000/api/message', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({ question, responseData }),
+        // });
+    
+        // if (!createResponse.ok) {
+        //   const data = await createResponse.json();
+        //   return alert('Unable to create Message' || data.message);
+        //   console.log("data" , data);
+        // }
+    
+        // // Fetch messages after creating a new message
+        // await fetchMessages();
+
+        // console.log("question" , question);
+        // console.log("response" , response);
         setMessages((current) => [...current, userMessage, response.data]);
+        console.log("chatId from onSubmit" , chatId);
+        const createResponseData = await saveResponse(question, responseData , chatId);
+        // const { message } = await getMessageById(messageId);
+        console.log("messageId", createResponseData);
+        // console.log("messageId question", createdMessage.question);
+        // console.log("messageId answer", createdMessage.answer);
+
+        const messageObject = {
+          question: question,
+          responseData: responseData,
+          messageId: createResponseData._id, // Assuming the ID is returned in the createdMessage object
+          // Add any other relevant fields here
+        };
+
+
+        await saveMessageToChat(chatId , createResponseData );
+        console.log("question after" , question);
+        console.log("response after" , responseData);
+        await fetchMessages();
+
         // await saveMessageData(question , response.data.content);
         // const ans = await saveMessageData(";;;", "qqqq");
         // console.log("anss" , ans);
@@ -80,7 +122,135 @@ const ConversationPage = () => {
       }
     }
   
+    const saveResponse = async (question: string, responseData: string , chatId : string) => {
+      try {
+        const createResponse = await fetch("http://localhost:3000/api/message", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question, responseData , chatId}),
+        });
+        // const createdMessage = await createResponse.json();
+        // const messageId = createdMessage._id;
+        
+        const createResponseData = await createResponse.json();
+        return createResponseData.data;
 
+        if (!createResponse.ok) {
+          const data = await createResponse.json();
+          alert("Unable to create Message" || data.message);
+
+          console.log("data", data);
+        }
+      } catch (error) {
+        console.error("Error creating message:", error);
+        toast.error("Failed to save message");
+      }
+    };
+
+
+    // const getChatById = async (id: string): Promise<Chat> => {
+    //   try {
+    //     const res = await fetch(`http://localhost:3001/api/chats/${id}`, {
+    //       cache: "no-store",
+    //     });
+    
+    //     if (!res.ok) {
+    //       throw new Error("Failed to fetch chat");
+    //     }
+    
+    //     return res.json();
+    //   } catch (error) {
+    //     console.log(error);
+    //     return { name: "" }; // Return empty name in case of error
+    //   }
+    // };
+
+    const saveMessageToChat = async (id: string, messageObject : any) => {
+      try {
+        const createResponse = await fetch(`http://localhost:3000/api/chat/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ messageObject}),
+        });
+        if (!createResponse.ok) {
+          const data = await createResponse.json();
+          alert("Unable to create Message" || data.message);
+          console.log("data", data);
+        }
+      } catch (error) {
+        console.error("Error creating message:", error);
+        toast.error("Failed to save message");
+      }
+    };
+    
+
+    const getMessageById = async (id : string) => {
+      try {
+        const res = await fetch(`http://localhost:3001/api/message/${id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          throw new Error("Failed to fetch topic");
+        }
+        return res.json();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+
+    // const createMessage = async () => {
+    //   try {
+    //     const response = await fetch('/api/message', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({ question, responseData }),
+    //     });
+    //     if (!response.ok) {
+    //       const data = await response.json();
+    //       return alert('Unable to create Message' || data.message);
+    //     }
+        
+    //     // Fetching messages after creating a new message
+    //     await fetchMessages();
+    //   } catch (error: any) {
+    //     console.error('Error creating message:', error);
+    //     if (error.response) {
+    //       console.error('Server responded with status:', error.response.status);
+    //     } else {
+    //       console.error('Error details:', error.message);
+    //     }
+    //   }
+    // };
+    
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/message', {
+          cache: 'no-store',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch messages');
+        }
+        const responseData = await response.json();
+        console.log('chats', responseData);
+        if (Array.isArray(responseData.chats)) {
+          // setChatsData(responseData.chats.reverse()); // Reversing to show the latest chats first
+        } else {
+          console.error('Invalid data format: "chats" is not an array');
+        }
+      } catch (error) {
+        console.error('Error fetching chats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
     return ( 
         <div>   
           {/* <ChatApp/> */}

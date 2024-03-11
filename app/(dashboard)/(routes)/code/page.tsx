@@ -23,7 +23,6 @@ import ReactMarkdown from "react-markdown";
 import { useProModal } from "@/hooks/use-pro-modal";
 import toast from "react-hot-toast";
 
-import {saveMessageData} from "@/lib/message";
 
 const CodePage = () => {
     const proModal = useProModal();

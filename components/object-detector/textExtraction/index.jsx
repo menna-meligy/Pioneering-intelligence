@@ -21,7 +21,7 @@ const ImageClassifier = () => {
 
       if (imageFile) {
         try {
-          const model = await tf.loadLayersModel("/model.json");
+          const model = await tf.loadLayersModel("lstm_model/model.json");
           const reader = new FileReader();
 
           reader.onload = async (event) => {

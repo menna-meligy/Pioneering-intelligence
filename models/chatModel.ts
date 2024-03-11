@@ -1,29 +1,28 @@
-// import mongoose, { Model, Schema, Types } from "mongoose";
-
-// const chatSchema = new Schema(
-//   {
-//     chatName: { type: String, trim: true },
-//     createdAt: { type: Date, default: Date.now },
-//     updatedAt: { type: Date, default: Date.now },
-//     uId: { type: String, required: true },
-//   },
-//   { timestamps: true }
-// );
-
-// const ChatModel: Model<any> = mongoose.model("Chat", chatSchema);
-// export { ChatModel };
-
 import mongoose, { Schema } from "mongoose";
 
-const topicSchema = new Schema(
+const messageSchema = new Schema(
   {
-    name: String,
+    question: { type: String, trim: true },
+    answer: { type: String, trim: true },
+    chatId: { type: Schema.Types.ObjectId, ref: "Chat" }, // Reference to the chat it belongs to
   },
   {
     timestamps: true,
   }
 );
 
-const Chat = mongoose.models.Chat || mongoose.model("Chat", topicSchema);
+const chatSchema = new Schema(
+  {
+    name: String,
+    messages: [messageSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default Chat;
+const Chat = mongoose.models.Chat || mongoose.model("Chat", chatSchema);
+const Message =
+  mongoose.models.Message || mongoose.model("Message", messageSchema);
+
+export { Chat, Message };
