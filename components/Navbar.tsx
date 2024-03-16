@@ -5,6 +5,7 @@ import {MobileSidebar} from "@/components/mobile-sidebar";
 
 import { getApiLimitCount } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
+import ChatApp from "@/app/(dashboard)/(routes)/chat/page";
 
 const Navbar = async () => {
     const apiLimitCount = await getApiLimitCount();
@@ -15,6 +16,7 @@ const Navbar = async () => {
             <div className="flex w-full justify-end">
                 <UserButton afterSignOutUrl="/"/>
             </div>
+            {/* <ChatApp/> */}
         </div>
     );
 }

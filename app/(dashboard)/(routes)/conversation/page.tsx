@@ -23,12 +23,21 @@ import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
 import  ImageClassifier  from "@/components/object-detector/index";
 
-const ConversationPage = ({ chatId }: { chatId: string }) => {
+// ({ chatId }: { chatId: string }
+const ConversationPage = ({ chatId }: { chatId: string })=> {
     const proModal = useProModal();
-    const router = useRouter();
+    // const router = useRouter();
     const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+//  const router = useRouter();
+//   const [chatId, setChatId] = useState<string | null>(null);
 
+//   useEffect(() => {
+//     const { chatId } = router.query;
+//     if (typeof chatId === 'string') {
+//       setChatId(chatId);
+//     }
+//   }, [router.query]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver : zodResolver(formSchema),

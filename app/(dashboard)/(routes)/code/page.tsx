@@ -56,18 +56,9 @@ const CodePage = () => {
             
             console.log("questionnnnnn" , question);
             console.log("response" , response.data.content);
-            
-            // await saveMessageData(question , response.data.content);
-            // if (ans === undefined || ans === null) {
-            //   console.log("f");
-            // }else {
-            //   console.log("t");
-            // }
-            // console.log("anssssssssssssssss" , ans);
+
             form.reset();
         }catch(err : any){
-            // console.log(err);
-            //TO_DO : OPEN PREMIUM MODEL
             if(err?.response?.status === 403){
               proModal.onOpen();
             }else {
@@ -126,7 +117,6 @@ const CodePage = () => {
                   <Loader />
                 </div>
               )}
-                          {/* if there is no messages */}
                           {messages.length === 0 && !isLoading && (
                             <Empty label="No conversation started."/>
                           )}
@@ -136,9 +126,6 @@ const CodePage = () => {
                                     className={cn("p-8 w-full flex items-start gap-x-8 rounded-lg", message.role === "user" ? "bg-white border bodrder-black/10 " : "bg-muted" )}
                                     >
                                       {message.role === "user" ? <UserAvatar/> : <BotAvatar/>}
-                                      {/* <p className="text-sm">  
-                                        {message.content}
-                                      </p> */}
                                         <ReactMarkdown 
                                         components={{pre : ({node , ...props}) => 
                                         (

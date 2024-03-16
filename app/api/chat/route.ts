@@ -17,37 +17,10 @@ export async function POST(request: any) {
   }
 }
 
-// export async function POST(request: any) {
-//   try {
-//     const { chatId, messageData } = await request.json(); // Assuming messageData contains the message content
-//     await connectDB();
-
-//     // Find the chat based on the provided chatId
-//     const chat = await Chat.findById(chatId);
-//     if (!chat) {
-//       return NextResponse.json({ message: "Chat not found" }, { status: 404 });
-//     }
-
-//     // Create a new message associated with the chat
-//     const newMessage = await Message.create({ chatId, ...messageData });
-
-//     // Push the ID of the new message to the chat's messages array
-//     await chat.updateOne({ $push: { messages: newMessage._id } });
-
-//     return NextResponse.json({ message: "Message created" }, { status: 201 });
-//   } catch (error) {
-//     console.error("Error creating message:", error);
-//     return NextResponse.json(
-//       { message: "Internal server error" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function GET() {
   try {
     await connectDB();
-    const chats = await Chat.find({}, { messages: 0 });
+    const chats = await Chat.find({}).populate("messages");
     return NextResponse.json({ chats });
   } catch (error) {
     console.error("Error fetching chats:", error);

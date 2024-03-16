@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import RemoveBtn from '../../../../components/RemoveBtn';
+import RemoveBtn from './RemoveBtn'
+// import RemoveBtn from '../../../../components/RemoveBtn';
 import { Button } from '@/components/ui/button';
 // import { useRouter } from 'next/router';
 import { HiPencilAlt } from "react-icons/hi";
-import EditBtn from '../../../../components/EditBtn';
-import ConversationPage from '../conversation/page';
+import EditBtn from './EditBtn'
+// import EditBtn from '../../../../components/EditBtn';
+// import ConversationPage from '../conversation/page';
 import Link from 'next/link';
 
 interface Chat {
@@ -19,8 +21,10 @@ interface Message {
   answer: string;
 }
 
-
-const ChatApp: React.FC = () => {
+interface Props {
+    setCurrentChatId: (chatId: string | null) => void; // Define setCurrentChatId in the Props interface
+  }
+  const ChatApp: React.FC<Props> = ({ setCurrentChatId }) => {
   const [chatsData, setChatsData] = useState<Chat[]>([]);
   const [newChatName, setNewChatName] = useState<string>('');
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
@@ -109,6 +113,7 @@ const ChatApp: React.FC = () => {
 
   const selectChat = (chat: Chat) => {
     setCurrentChat(chat);
+    setCurrentChatId(chat._id);
   };
 
   if (loading) {
@@ -165,7 +170,7 @@ const ChatApp: React.FC = () => {
       {currentChat && currentChat.messages && ( 
   <div className="flex items-center justify-center">
     <h2 className="text-xl font-semibold">{currentChat.name}</h2>
-    <ConversationPage chatId={currentChat._id}/>
+    {/* <ConversationPage chatId={currentChat._id}/> */}
     <Link href={`/conversation?chatId=${currentChat._id}`} passHref>
 </Link>
     <ul>
