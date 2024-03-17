@@ -165,7 +165,7 @@ const ChatApp: React.FC = () => {
       {currentChat && currentChat.messages && ( 
   <div className="flex items-center justify-center">
     <h2 className="text-xl font-semibold">{currentChat.name}</h2>
-    <ConversationPage chatId={currentChat._id}/>
+    {/* <ConversationPage chatId={currentChat._id}/> */}
     <Link href={`/conversation?chatId=${currentChat._id}`} passHref>
 </Link>
     <ul>

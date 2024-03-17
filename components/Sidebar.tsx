@@ -8,6 +8,8 @@ import { Code, ImageIcon, LayoutDashboard, MessagesSquare, Music, Settings, Vide
 import { usePathname } from "next/navigation";
 import {FreeCounter} from "@/components/free-counter";
 import ChatApp from "./chat";
+import { useState } from "react";
+// import ConversationPage from "@/app/(dashboard)/(routes)/conversation/page";
 
 const montserrat = Montserrat({weight:"600" , subsets:["latin"]})
 const routes = [
@@ -65,10 +67,17 @@ export const Sidebar = ({
     
 } :sidebarProps) => {
     const pathName = usePathname;
+    const [chatId, setChatId] = useState<string | null>(null);
+
+    // Function to set the chatId
+    const handleSetChatId = (id: string) => {
+      setChatId(id);
+    };
+
     return (  
         <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
             <div className="px-3 py-2 flex-1">
-                <ChatApp/>
+                <ChatApp setChatId={handleSetChatId} />
                 <Link href="/dashboard" className="flex-items-center pl-3 mb-14">
                     <div className="relative w-8 h-8 mr-4">   
                         <Image 
@@ -79,11 +88,12 @@ export const Sidebar = ({
                     <h3 className={cn( "text-2xl font-bold mx-10" , montserrat.className)}> WebSync </h3>
                     </div>
                 </Link>
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                     {routes.map((route) => 
                     <Link 
                     href={route.href} 
                     key={route.href} 
+                    passHref
                     className={cn(
                         "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 transition",
                         pathName() === route.href ? "text-white bg-white/10" : "text-zinc-400"
@@ -96,7 +106,10 @@ export const Sidebar = ({
                     </div> 
 
                     </Link>)}
-                </div>
+                </div> */}
+                {/* <ConversationPage chatId={chatId} /> */}
+                    {/* <ConversationPage chatId={chatId} /> */}
+
             </div>
             
             <FreeCounter

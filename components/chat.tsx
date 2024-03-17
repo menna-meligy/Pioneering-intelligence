@@ -9,6 +9,8 @@ import EditBtn from './EditBtn'
 // import EditBtn from '../../../../components/EditBtn';
 // import ConversationPage from '../conversation/page';
 import Link from 'next/link';
+import ConversationPage from '@/app/(dashboard)/(routes)/conversation/page';
+import { saveAs } from 'file-saver';
 
 interface Chat {
   _id: string;
@@ -21,14 +23,17 @@ interface Message {
   answer: string;
 }
 
-interface Props {
-    setCurrentChatId: (chatId: string | null) => void; // Define setCurrentChatId in the Props interface
+interface ChatAppProps {
+    setChatId: (id: string) => void;
   }
-  const ChatApp: React.FC<Props> = ({ setCurrentChatId }) => {
+//   { setCurrentChatId }
+const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   const [chatsData, setChatsData] = useState<Chat[]>([]);
   const [newChatName, setNewChatName] = useState<string>('');
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryChatId = searchParams.get('chatId');
   // const router = useRouter();
   useEffect(() => {
     fetchChats();
@@ -92,9 +97,16 @@ interface Props {
       });
       const data = await response.json();
       if (!response.ok) {
-        return alert("Unable to create chat" || data.message);
+        throw new Error("Failed to create chat");
       }
   
+      const newChatId = data._id;
+  
+      // Update the URL with the new chatId
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('chatId', newChatId);
+      window.history.replaceState({}, '', newUrl);
+
       setNewChatName('');
       
       // Fetching chats after creating a new chat
@@ -110,19 +122,36 @@ interface Props {
   };
 
 
-
   const selectChat = (chat: Chat) => {
     setCurrentChat(chat);
-    setCurrentChatId(chat._id);
+    setChatId(chat._id);
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
   // setChatsData(await fetchChats());
 
-  const handleUpdateChatName = (newName: string) => {
+  const handleUpdateChatName = async (newName: string) => {
     setNewChatName(newName);
+    await fetchChats();
+  };
+
+  if (!selectChat && !queryChatId){
+    createChat();
+  }
+
+  const handleDownloadChat = (chat: Chat) => {
+    // Create a new Blob containing the chat data
+    const chatData = `
+      Chat Name: ${chat.name}\n\n
+      Messages:\n
+      ${chat.messages.map((message, index) => `Question ${index + 1}: ${message.question}\nAnswer ${index + 1}: ${message.answer}\n`).join('\n')}
+    `;
+    const blob = new Blob([chatData], { type: 'text/plain;charset=utf-8' });
+
+    // Trigger download using FileSaver.js
+    saveAs(blob, `${chat.name}.txt`);
   };
 
   return (
@@ -144,12 +173,25 @@ interface Props {
         {Array.isArray(chatsData) && chatsData.map((chat) => (
   <li key={chat._id}>
     <div className="flex items-center">
+        
       <button
-        onClick={() => selectChat(chat)}
+        onClick={() => {
+            setCurrentChat(chat);
+            setChatId(chat._id);
+            selectChat(chat)
+            window.history.pushState({}, '', `?chatId=${chat._id}`);
+          }}
         className={`rounded-md mr-2 mb-2 py-2 px-4 ${currentChat === chat ? 'bg-blue-200' : 'bg-gray-200 hover:bg-gray-300'}`}
       >
         {chat.name}
       </button>
+       <div className="relative">
+                <button className="ml-2" onClick={() => handleDownloadChat(chat)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 hover:text-gray-700" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 3a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V4a1 1 0 0 0-1-1zM4 5a1 1 0 0 0-1 1v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a1 1 0 0 0-1-1h-4a1 1 0 0 0 0 2h3v8H5V7h3a1 1 0 1 0 0-2H4z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
       <RemoveBtn id={chat._id} />
       <EditBtn id={chat._id} name={newChatName} onUpdate={handleUpdateChatName}/>
 {/* 
@@ -169,14 +211,27 @@ interface Props {
 
       {currentChat && currentChat.messages && ( 
   <div className="flex items-center justify-center">
-    <h2 className="text-xl font-semibold">{currentChat.name}</h2>
+    <h2 className="text-xl font-semibold"></h2>
     {/* <ConversationPage chatId={currentChat._id}/> */}
-    <Link href={`/conversation?chatId=${currentChat._id}`} passHref>
-</Link>
+    {/* <ConversationPage chatId={currentChat._id}/> */}
+    {/* <button 
+  onClick={() => {
+    setCurrentChat(currentChat);
+    setChatId(currentChat._id);
+    window.history.pushState({}, '', `?chatId=${currentChat._id}`);
+  }} 
+  className={`rounded-md mr-2 mb-2 py-2 px-4 ${currentChat === currentChat ? 'bg-blue-200' : 'bg-gray-200 hover:bg-gray-300'}`}
+>
+  {currentChat.name}
+</button> */}
+
+    {/* <Link href={`/conversation?chatId=${currentChat._id}`} passHref>
+        k
+</Link> */}
     <ul>
       {currentChat.messages.map((message: any, index: number) => (
-        <li key={index}>
-          <div>
+        <li key={index} className="border-b py-4">
+          <div className="mb-2">
             <strong>Question:</strong> {message.question}
           </div>
           <div>
