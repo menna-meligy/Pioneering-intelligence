@@ -15,21 +15,33 @@
   import axios from "axios";
   import {useRouter } from "next/navigation"
   import {ChatCompletionRequestMessage} from "openai";
-  import { useState , useEffect} from "react";
+  import { useState , useEffect, SetStateAction} from "react";
   import { Empty } from "@/components/empty";
   import { Loader } from "@/components/loader";
   import { UserAvatar } from "@/components/user-avatar";
   import { BotAvatar } from "@/components/bot-avatar";
   import { useProModal } from "@/hooks/use-pro-modal";
   import  ImageClassifier  from "@/components/object-detector/index";
-
+  import TextExtractor from "@/components/object-detector/textExtraction/index"
 
   const ConversationPage = ()=> {
+    // var messageWithOutputs;
       const proModal = useProModal();
       const [messages , setMessages] = useState<ChatCompletionRequestMessage[]>([]);
       const searchParams = new URLSearchParams(window.location.search);
       const chatId = searchParams.get('chatId');
-      
+
+      const [textOutput, setTextOutput] = useState("");
+      const [graphOutput, setGraphOutput] = useState("");
+      const [question, setQuestion] = useState("");
+      const [formLoading, setFormLoading] = useState(false);
+
+      const handleOutputsReceived = (textOutput: SetStateAction<string>, graphOutput: SetStateAction<string>) => {
+        setTextOutput(textOutput);
+        setGraphOutput(graphOutput);
+        setFormLoading(true); 
+      };
+
       const router = useRouter();
       console.log('chatId:', chatId);
 const form = useForm<z.infer<typeof formSchema>>({
@@ -43,42 +55,81 @@ const form = useForm<z.infer<typeof formSchema>>({
         const searchParams = new URLSearchParams(window.location.search);
         const chatId = searchParams.get('chatId');
         console.log('chatId:', chatId);
-      }, []);
+        // setQuestion(`${prompt} ${textOutput} ${graphOutput}`);
+            if (textOutput && graphOutput) {
+      // handleSubmit(onSubmit)();
+      setFormLoading(false); 
+      onSubmit();
+    }
+
+      }, [textOutput, graphOutput]);
 
       const isLoading = form.formState.isSubmitting;
 
       const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        try {
+        if (formLoading) {
+          return;
+        }
+        setFormLoading(true);
+          try {
           const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
           const newMessages = [...messages, userMessage];
           const { prompt } = values;
-          const question = prompt;
-
+          // const question = prompt;
+          // const question = `${prompt} ${textOutput} ${graphOutput}`;
           console.log('chatId before condition check:', chatId);
           if (!chatId) {
             // If chatId is not available, display an error message and return
             toast.error("Please select a chat or create a new one.");
             return;
           }
-          
-          const response = await axios.post('/api/conversation', { messages: newMessages});
-          const responseData: string = response.data.content as string;
+          // if (predictedClassIndex === 2) {
+          //   // If predictedClassIndex is 2, concatenate the outputs of TextExtractor and ImageRevealer
+          //   const textExtractorOutput = await TextExtractor(imageFile);
+          //   const imageRevealerOutput = await ImageRevealer(imageFile);
+          //   newMessages += ` ${textExtractorOutput} ${imageRevealerOutput}`;
+          // }
 
-    
-          setMessages((current) => [...current, { ...userMessage, chatId }, response.data]);
-          console.log(question , "question before post");
-          console.log(responseData , "responseData before post");
-          // setMessages((current) => [...current, userMessage, response.data]);
-          console.log("chatId from onSubmit" , chatId);
-          const createResponseData = await saveResponse(question, responseData , chatId);
-          console.log("messageId", createResponseData);
+        // Concatenate textOutput and graphOutput with the user's message
+      // const userMessageContent = values.prompt;
+      // messageWithOutputs = `${userMessageContent} ${textOutput} ${graphOutput}`;
+// Concatenate textOutput and graphOutput with the user's message
+// const userMessageContent = values.prompt;
+// const messageWithOutputs = `${userMessageContent} ${textOutput} ${graphOutput}`;
+if (textOutput && graphOutput) { 
+const response = await axios.post('/api/conversation', { messages:newMessages, 
+  textOutput, 
+  graphOutput, 
+  chatId });
+  // const response = await axios.post('/api/conversation', { messages: newMessages , question});
+  const responseData: string = response.data.content as string;
 
-
-          await saveMessageToChat(chatId , createResponseData );
-          console.log("question after" , question);
-          console.log("response after" , responseData);
-          await fetchMessages();
-          form.reset();
+  
+  // setMessages((current) => [...current, { ...userMessage, chatId }, response.data]);
+  setMessages((current) => [...current, { ...userMessage, chatId }, response.data]);
+  
+  console.log(question , "question before post");
+  console.log(responseData , "responseData before post");
+  // setMessages((current) => [...current, userMessage, response.data]);
+  console.log("chatId from onSubmit" , chatId);
+  // const createResponseData = await saveResponse(question, responseData , chatId);
+  // console.log("messageId", createResponseData);
+  
+  
+  // await saveMessageToChat(chatId , createResponseData );
+  // const createResponseData = await saveResponse(question, response.data.content, chatId);
+  const createResponseData = await saveResponse(prompt, responseData, chatId);
+  
+  await saveMessageToChat(chatId, createResponseData);
+  // console.log("messageId", createResponseData);
+  
+  console.log("question after" , question);
+  console.log("response after" , responseData);
+  
+  await fetchMessages();
+  
+  form.reset();
+}
         } catch (error: any) {
           if (error?.response?.status === 403) {
             proModal.onOpen();
@@ -87,6 +138,7 @@ const form = useForm<z.infer<typeof formSchema>>({
           }
         }
         finally {
+          setFormLoading(false); 
           router.refresh();
         }
       }
@@ -102,8 +154,8 @@ const form = useForm<z.infer<typeof formSchema>>({
           });
           
           const createResponseData = await createResponse.json();
-          return createResponseData.data;
-
+          // return createResponseData.data;
+          return createResponseData;
           if (!createResponse.ok) {
             const data = await createResponse.json();
             alert("Unable to create Message" || data.message);
@@ -150,6 +202,7 @@ const form = useForm<z.infer<typeof formSchema>>({
           console.log(error);
         }
       };
+      const [chatsData, setChatsData] = useState<any[]>([]);
 
       const fetchMessages = async () => {
         try {
@@ -206,8 +259,9 @@ const form = useForm<z.infer<typeof formSchema>>({
   > 
       Generate
   </Button>
-  <ImageClassifier/>
-
+  <ImageClassifier onOutputsReceived={handleOutputsReceived}/>
+  {/* <TextExtractor/> */}
+{/* {messageWithOutputs} */}
                       </form>
                   </Form>
               </div>

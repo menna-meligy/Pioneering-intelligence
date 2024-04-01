@@ -86,7 +86,7 @@ export async function POST(req: Request) {
   try {
     const { userId } = auth();
     const body = await req.json();
-    const { messages, chatId } = body;
+    const { messages, chatId, textOutput, graphOutput } = body;
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -110,7 +110,8 @@ export async function POST(req: Request) {
         { status: 403 }
       );
     }
-
+    const userMessageContent = messages[messages.length - 1].content;
+    const messageWithOutputs = `${userMessageContent} ${textOutput} ${graphOutput}`;
     // Save the question before making the OpenAI API call
     if (messages.length === 0) {
       await saveQuestionDB(body.content, chatId);
@@ -120,7 +121,10 @@ export async function POST(req: Request) {
 
     const response = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
-      messages,
+      messages: [
+        { role: "system", content: messageWithOutputs },
+        ...body.messages,
+      ],
     });
     const responseData = response.data.choices[0].message;
 

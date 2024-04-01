@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/object-detector/index.jsx"
+    "components/object-detector/index.jsx",
+    "public/lstm_model/index.jsx"
   ],
   "exclude": ["node_modules"]
 }

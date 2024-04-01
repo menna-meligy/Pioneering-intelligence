@@ -1,13 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import RemoveBtn from './RemoveBtn'
-// import RemoveBtn from '../../../../components/RemoveBtn';
 import { Button } from '@/components/ui/button';
-// import { useRouter } from 'next/router';
 import { HiPencilAlt } from "react-icons/hi";
-import EditBtn from './EditBtn'
-// import EditBtn from '../../../../components/EditBtn';
-// import ConversationPage from '../conversation/page';
+import EditBtn from './EditBtn';
 import Link from 'next/link';
 import ConversationPage from '@/app/(dashboard)/(routes)/conversation/page';
 import { saveAs } from 'file-saver';
@@ -26,7 +22,7 @@ interface Message {
 interface ChatAppProps {
     setChatId: (id: string) => void;
   }
-//   { setCurrentChatId }
+
 const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   const [chatsData, setChatsData] = useState<Chat[]>([]);
   const [newChatName, setNewChatName] = useState<string>('');
@@ -34,33 +30,11 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const searchParams = new URLSearchParams(window.location.search);
   const queryChatId = searchParams.get('chatId');
-  // const router = useRouter();
+
   useEffect(() => {
     fetchChats();
   }, []);
 
-  // const fetchChats = async () => {
-  //   try {
-  //     const chatsResponse = await fetch('http://localhost:3000/api/chat', {
-  //       cache: "no-store",
-  //     });
-  //     const responseData = await chatsResponse.json();
-  //     console.log("chats", responseData);
-  //     if (chatsResponse.ok) {
-  //       if (Array.isArray(responseData.chats)) {
-  //         setChatsData(responseData.chats.reverse()); // Reverseing to show the latest chats first 
-  //       } else {
-  //         console.error('Invalid data format: "chats" is not an array');
-  //       }
-  //     } else {
-  //       console.error('Failed to fetch chats:', responseData.message);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching chats:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const fetchChats = async () => {
     try {
       const chatsResponse = await fetch('http://localhost:3000/api/chat', {
@@ -72,7 +46,7 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
         if (Array.isArray(responseData.chats)) {
           const chatsWithData = responseData.chats.map((chat: { messages: any; })=> ({
             ...chat,
-            messages: chat.messages || [] // Ensure messages array exists
+            messages: chat.messages || []
           }));
           setChatsData(chatsWithData.reverse());
         } else {
@@ -102,14 +76,13 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   
       const newChatId = data._id;
   
-      // Update the URL with the new chatId
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('chatId', newChatId);
       window.history.replaceState({}, '', newUrl);
 
       setNewChatName('');
       
-      // Fetching chats after creating a new chat
+
       await fetchChats();
     } catch (error: any) {
       console.error('Error creating chat:', error);
@@ -130,7 +103,6 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
-  // setChatsData(await fetchChats());
 
   const handleUpdateChatName = async (newName: string) => {
     setNewChatName(newName);
@@ -142,7 +114,6 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
   }
 
   const handleDownloadChat = (chat: Chat) => {
-    // Create a new Blob containing the chat data
     const chatData = `
       Chat Name: ${chat.name}\n\n
       Messages:\n
@@ -150,7 +121,6 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
     `;
     const blob = new Blob([chatData], { type: 'text/plain;charset=utf-8' });
 
-    // Trigger download using FileSaver.js
     saveAs(blob, `${chat.name}.txt`);
   };
 
@@ -194,14 +164,6 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
               </div>
       <RemoveBtn id={chat._id} />
       <EditBtn id={chat._id} name={newChatName} onUpdate={handleUpdateChatName}/>
-{/* 
-      <button onClick={() => router.push(`/editChat/${chat._id}`)} className="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">
-                <HiPencilAlt size={24} />
-      </button> */}
-      {/* <button onClick={() => editChat(chat.id, prompt('Enter new name'))} className="bg-green-500 text-white px-4 py-2 rounded-md ml-2">Edit</button> */}
-      {/* <button onClick={() => deleteChat(chat.id)} className="bg-red-500 text-white px-4 py-2 rounded-md ml-2">Delete</button> */}
-
-
     </div>
   </li>
 ))}
@@ -212,22 +174,6 @@ const ChatApp: React.FC<ChatAppProps> = ({ setChatId }) => {
       {currentChat && currentChat.messages && ( 
   <div className="flex items-center justify-center">
     <h2 className="text-xl font-semibold"></h2>
-    {/* <ConversationPage chatId={currentChat._id}/> */}
-    {/* <ConversationPage chatId={currentChat._id}/> */}
-    {/* <button 
-  onClick={() => {
-    setCurrentChat(currentChat);
-    setChatId(currentChat._id);
-    window.history.pushState({}, '', `?chatId=${currentChat._id}`);
-  }} 
-  className={`rounded-md mr-2 mb-2 py-2 px-4 ${currentChat === currentChat ? 'bg-blue-200' : 'bg-gray-200 hover:bg-gray-300'}`}
->
-  {currentChat.name}
-</button> */}
-
-    {/* <Link href={`/conversation?chatId=${currentChat._id}`} passHref>
-        k
-</Link> */}
     <ul>
       {currentChat.messages.map((message: any, index: number) => (
         <li key={index} className="border-b py-4">

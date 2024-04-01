@@ -1,8 +1,13 @@
 import React, { useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
-
-const ImageClassifier = () => {
+import ImageRevealer from "@/components/object-detector/imageReveal/index";
+import TextExtractor from "@/components/object-detector/textExtraction/index";
+const ImageClassifier = ({ onOutputsReceived }) => {
   const inputRef = useRef(null);
+  // const [textOutput, setTextOutput] = useState("");
+  // const [graphOutput, setGraphOutput] = useState("");
+  let textOutput = "";
+  let graphOutput = "";
 
   const preprocessImage = async (image) => {
     const resizedImage = tf.image.resizeBilinear(image, [256, 256]);
@@ -39,6 +44,18 @@ const ImageClassifier = () => {
 
               console.log("predictedClassIndex", predictedClassIndex);
               resultDiv.innerText = `Predicted Class: ${predictedClassIndex}`;
+
+              // if (predictedClassIndex === 2) {
+              // If predictedClassIndex is 2-> text and graphs, pass the image to TextExtractor and ImageRevealer
+              textOutput = await TextExtractor(imageFile);
+              graphOutput = await ImageRevealer(imageFile);
+              // }
+              // setTextOutput(textOutput);
+              // setGraphOutput(graphOutput);
+              // Pass outputs to the parent component
+              console.log("textOutput", textOutput);
+              console.log("graphOutput", graphOutput);
+              onOutputsReceived(graphOutput, textOutput);
             };
           };
 
