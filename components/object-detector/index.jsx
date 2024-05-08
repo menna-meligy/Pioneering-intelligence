@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
 import ImageRevealer from "@/components/object-detector/imageReveal/index";
 import TextExtractor from "@/components/object-detector/textExtraction/index";
+import { MdCloudUpload } from "react-icons/md";
+
 const ImageClassifier = ({ onOutputsReceived }) => {
   const inputRef = useRef(null);
   // const [textOutput, setTextOutput] = useState("");
@@ -79,7 +81,13 @@ const ImageClassifier = ({ onOutputsReceived }) => {
         ref={inputRef}
         onChange={classifyImage}
       />
-      <button onClick={() => inputRef.current?.click()}>Upload Image</button>
+      {/* <button onClick={() => inputRef.current?.click()}>Upload Image</button> */}
+      <button
+        onClick={() => inputRef.current?.click()}
+        style={{ background: "none", border: "none", cursor: "pointer" }}
+      >
+        <MdCloudUpload size={24} /> {/* Adjust size as needed */}
+      </button>
       <div id="result"></div>
     </div>
   );
